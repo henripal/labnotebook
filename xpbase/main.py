@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 import datetime as dt
-import xpbase.config as config
+import xpbase
 
 
 def initialize(db_string):
@@ -12,9 +12,9 @@ def initialize(db_string):
     """
     
     engine = create_engine(db_string)
-    config.Base = declarative_base(engine)
+    xpbase.Base = declarative_base(engine)
     Session = sessionmaker(bind = engine)
-    config.session = Session()
+    xpbase.session = Session()
 
     # Experiment and TrainingStep are objects that
     # we need to access everywhere. 
@@ -28,7 +28,9 @@ def initialize(db_string):
                                back_populates="experiment")
 
     # and we update the metadata
-    config.Base.metadata.create_all(engine)
+    xpbase.Base.metadata.create_all(engine)
+    
+    return Experiment, TrainingStep
 
 def start_experiment(dt = dt.datetime.now(), 
                     gpu_id = 0,
@@ -49,8 +51,8 @@ def start_experiment(dt = dt.datetime.now(),
     xp = Experiment(dt=dt,
         gpu = gpu_id,
         model_desc = model_desc)
-    config.session.add(xp)
-    config.session.commit()
+    xpbase.session.add(xp)
+    xpbase.session.commit()
 
     return xp
 
@@ -74,7 +76,7 @@ def end_experiment(xp, final_trainloss=None, final_trainacc=None,
     xp.final_trainacc = final_trainacc
     xp.final_valacc = final_valacc
     xp.completed = True
-    config.session.commit()
+    xpbase.session.commit()
 
     return xp
 
@@ -99,8 +101,8 @@ def step_experiment(xp, timestep,
     step = TrainingStep(run_id=xp.run_id, timestep=timestep,
         trainloss=trainloss, trainacc=trainacc, valacc=valacc, 
         epoch=epoch, model_params=model_params)
-    config.session.add(step)
-    config.session.commit()
+    xpbase.session.add(step)
+    xpbase.session.commit()
 
     return step
 

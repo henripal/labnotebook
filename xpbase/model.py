@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, Sequence,  DateTime, Float, Boolean, For
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
-from xpbase.config import Base
+from xpbase import Base
 
 
 class Experiment(Base):
