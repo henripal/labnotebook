@@ -14,7 +14,7 @@ Vue.use(Resource);
 Vue.use(Vuetify);
 Vue.use(VueHighCharts, {Highcharts});
 
-Vue.http.options.root = 'http://localhost:5000'
+Vue.http.options.root = 'http://localhost:3000'
 
 new Vue({
   el: '#app',

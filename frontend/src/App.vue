@@ -9,13 +9,31 @@
     <v-list>
       <br>
       <v-list-tile>
-        <v-text-field
-        name="input1"
-        label="Start Step"
-        id="testing"
-        type="number"
-        v-model="datastart"></v-text-field>
+          <v-select
+            :items="Object.keys(experiments).filter(x => !selectedExperiments.includes(x)).sort((a, b)=> (b-a))"
+            v-model="selectedExperiment"
+            label="Add Experiment" min-width="300px" class="pr-5">
+          </v-select>
+          <v-btn flat icon>
+            <v-icon @click="getExperiments()">cached</v-icon>
+          </v-btn>
       </v-list-tile>
+      <transition-group name="list-complete" tag="div">
+        <v-list-tile v-for="(element, i) in selectedExperiments" @click="" :key="element" avatar class="list-complete-item">
+            <v-list-tile-avatar>
+              <v-icon small>fas fa-calculator</v-icon>
+            </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title>Run no. {{element}}</v-list-tile-title>
+            <v-list-tile-sub-title>Date: {{experiments[element].dt}}</v-list-tile-sub-title>
+          </v-list-tile-content>
+          <v-list-tile-action>
+            <v-btn icon ripple @click="removeExperiment(i)">
+              <v-icon color="grey lighten-1">close</v-icon>
+            </v-btn>
+          </v-list-tile-action>
+        </v-list-tile>
+      </transition-group>
     </v-list>
 
     </v-navigation-drawer>
@@ -28,17 +46,22 @@
       <v-container grid-list-xl text-xs-center fluid>
         <v-layout row wrap>
           <v-flex xs6>
-            <app-chart-card :datastart="datastart"></app-chart-card>
+            <app-chart-card :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card>
           </v-flex>
 
           <v-flex xs6>
-            <app-chart-card :datastart="datastart"></app-chart-card>
+            <app-chart-card :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card>
           </v-flex>
+
           <v-flex xs6>
-            <v-data-table :items="items" :headers="headers" class="elevation-1">
+            <v-data-table :items="flatExperiments" :headers="headers" class="elevation-1">
               <template slot="items" slot-scope="props">
-                <td class="text-xs-right">{{ props.item.x }}</td>
-                <td class="text-xs-right">{{ props.item.y }}</td>
+                <td class="text-xs-right">{{ props.item.run_id }}</td>
+                <td class="text-xs-right">{{ props.item.dt }}</td>
+                <td class="text-xs-right">{{ props.item.gpu }}</td>
+                <td class="text-xs-right">{{ props.item.final_valacc }}</td>
+                <td class="text-xs-right">{{ props.item.final_trainacc }}</td>
+                <td class="text-xs-right">{{ props.item.final_trainloss }}</td>
               </template>
             </v-data-table>
           </v-flex>
@@ -56,32 +79,80 @@ export default {
   data () {
     return {
       drawer: true,
-      msg: 'Welcome to Your Vue.js App',
-      myResponse: '',
-      title: 'proto app',
-      datastart: 0,
+      experiments: [],
+      selectedExperiments: [],
+      selectedExperiment: '',
       items: [],
       headers: [
-        {text: 'x', value: 'x', align: 'right'},
-        {text: 'y', value: 'y', align: 'right'}
+        {text: 'Run Id', value: 'run_id', align: 'right'},
+        {text: 'Date Time', value: 'dt', align: 'right'},
+        {text: 'GPU ID', value: 'gpu', align: 'right'},
+        {text: 'Val. Acc.', value: 'final_valacc', align: 'right'},
+        {text: 'Train. Acc.', value: 'final_trainacc', align: 'right'},
+        {text: 'Train. Loss', value: 'final_trainloss', align: 'right'}
       ]
     }
   },
   components: {
     appChartCard: chartCard
   },
+  computed: {
+    flatExperiments() {
+      var result = [];
+      for (var experiment_key of Object.keys(this.experiments)) {
+        result.push(this.experiments[experiment_key])
+      }
+      return result;
+    }
+  },
+  watch: {
+    selectedExperiment: function(newval, oldval)  {
+      this.addExperiment(newval);
+    }
+  },
   methods: {
-    getData(datastart) {
-      this.$http.get('').then(response => {
-        this.items =   response.body[0].slice(this.datastart)
+    getExperiments() {
+      this.$http.get('experiments').then(response => {
+        var dict = {}
+        for (var experiment of response.body) {
+          dict[experiment.run_id] = experiment
+        }
+        this.experiments =  dict ;
       })
+    },
+    removeExperiment: function(index_toremove) {
+      // do this swap rather than mutate
+      // so we can watch for changes
+      let newSelected = this.selectedExperiments.slice(0);
+      newSelected.splice(index_toremove,1);
+      this.selectedExperiments = newSelected;
+    },
+    addExperiment: function(index_toadd) {
+      // do this swap rather than mutate
+      // so we can watch for changes
+      let newSelected = this.selectedExperiments.slice(0);
+      newSelected.push(index_toadd);
+      this.selectedExperiments = newSelected;
     }
   },
   beforeMount() {
-    this.getData()
+    this.getExperiments()
   }
 }
 </script>
 
-<style lang="scss">
+<style>
+.list-complete-item {
+  transition: all 500ms;
+  display: inline-block;
+}
+.list-complete-enter, .list-complete-leave-to
+/* .list-complete-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+.list-complete-leave-active {
+  position: absolute;
+}
+
 </style>

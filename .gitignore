@@ -16,3 +16,4 @@ wheels/
 *.egg
 *.py.swp
 .ropeproject/
+node_modules/
