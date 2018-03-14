@@ -7,7 +7,9 @@ import Vuetify from 'vuetify'
 
 import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/es5/util/colors'
+import loadStock from 'highcharts/modules/stock';
 
+loadStock(Highcharts)
 Highcharts.setOptions({credits: false})
 
 Vue.use(Resource);

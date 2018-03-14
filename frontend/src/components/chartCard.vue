@@ -9,7 +9,11 @@
         </v-btn>
         <v-list dense>
           <v-list-tile>
-            Plot Series: <v-spacer></v-spacer> <v-icon>fas fa-chart-line</v-icon>
+            <v-list-tile-content>
+              <v-list-tile-title>
+              Variables to plot: 
+              </v-list-tile-title>
+            </v-list-tile-content>
           </v-list-tile>
           <v-list-tile>
             <v-checkbox label='Val. Acc.' v-model="toplot" value="valacc"></v-checkbox>
@@ -21,13 +25,24 @@
             <v-checkbox label='Train. Loss' v-model="toplot" value="trainloss"></v-checkbox>
           </v-list-tile>
           <v-list-tile>
-            y-axis type: <v-spacer></v-spacer> <v-icon>fas fa-chart-line</v-icon>
+            <v-list-tile-content>
+              <v-list-tile-title>
+              Y-axis type: 
+              </v-list-tile-title>
+            </v-list-tile-content>
           </v-list-tile>
           <v-list-tile>
             <v-radio-group :column="false" v-model="options.yAxis.type">
               <v-radio label="log" value="logarithmic"></v-radio>
               <v-radio label="linear" value="linear"></v-radio>
             </v-radio-group>
+          </v-list-tile>
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>
+              Streaming:
+              </v-list-tile-title>
+            </v-list-tile-content>
           </v-list-tile>
           <v-list-tile>
             <v-switch :label="'autoupdate ' + (liveUpdate ? 'on' : 'off')"
@@ -50,6 +65,9 @@ export default {
       toplot: ['valacc'],
       selectitems: ['line', 'bar'],
       options: {
+        chart: {
+          zoomType: 'x'
+        },
         yAxis: {
           title: {text: null },
           type: 'linear'

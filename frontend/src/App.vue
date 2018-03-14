@@ -19,15 +19,18 @@
           </v-btn>
       </v-list-tile>
       <transition-group name="list-complete" tag="div">
-        <v-list-tile v-for="(element, i) in selectedExperiments" @click="" :key="element" avatar class="list-complete-item">
+        <v-list-tile v-for="(element, i) in selectedExperiments" @click="" avatar class="list-complete-item" :key="element">
             <v-list-tile-avatar>
               <v-icon small>fas fa-calculator</v-icon>
             </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>Run no. {{element}}</v-list-tile-title>
-            <v-list-tile-sub-title>Date: {{experiments[element].dt}}</v-list-tile-sub-title>
-          </v-list-tile-content>
-          <v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title >Run no. {{element}}</v-list-tile-title>
+              <v-tooltip bottom>
+                <v-list-tile-sub-title slot="activator">Date: {{experiments[element].dt}}</v-list-tile-sub-title>
+                <span>{{ experiments[element].model_desc }}</span>
+              </v-tooltip>
+            </v-list-tile-content>
+          <v-list-tile-action right>
             <v-btn icon ripple @click="removeExperiment(i)">
               <v-icon color="grey lighten-1">close</v-icon>
             </v-btn>
