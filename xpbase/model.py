@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Sequence,  DateTime, Float, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, JSON
 
 from xpbase import Base
 
@@ -37,8 +37,18 @@ class TrainingStep(Base):
     valacc = Column(Float, nullable=True)
     
     epoch = Column(Integer, nullable=True)
-    model_params = Column(JSONB, nullable=True)
-    
+    custom_fields = Column(JSONB, nullable=True)
+
     def __repr__(self):
         return 'Step {} of run {}'.format(self.timestep, self.run_id)
+
+
+class ModelParams(Base):
+    __tablename__ = 'modelparams'
+
+    step_id = Column(Integer, primary_key=True)
+    model_params = Column(JSON, nullable=True) # we use JSON because we won't need indexing here.
+
+
+    
      

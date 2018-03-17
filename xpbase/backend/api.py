@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS, cross_origin
 import xpbase
 from collections import defaultdict
@@ -14,7 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
 
-xp,ts = xpbase.initialize("postgres://postgres:1418@localhost/experiments")
+xp,ts, mp = xpbase.initialize("postgres://postgres:1418@localhost/experiments")
 
 def flip_dict(dict_list):
     """
@@ -55,8 +55,36 @@ class Experiments(Resource):
 
         return jsonify(result)
 
+class CustomFieldNames(Resource):
+    def get(self, run_id):
+        query = xpbase.session.query(
+            func.jsonb_object_keys(ts.custom_fields)).filter(
+            ts.run_id == run_id).filter(
+            ts.timestep == 1).all()
+
+        query = [q[0] for q in query]
+
+        return jsonify(query)
+
+class CustomFields(Resource):
+    def get(self, run_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('fieldname', type=str)
+
+        fieldname = parser.parse_args()['fieldname']
+
+        query = xpbase.session.query(ts.timestep, ts.custom_fields[fieldname].label('cf')).filter(ts.run_id == run_id).all()
+
+        result = xpbase.cfs_schema.dump(query)[0]
+
+
+        return jsonify(flip_dict(result))
+
+
 # our api:
 api.add_resource(Steps, '/steps/<string:run_id>')
+api.add_resource(CustomFields, '/customfields/<string:run_id>')
+api.add_resource(CustomFieldNames, '/customfieldnames/<string:run_id>')
 api.add_resource(Experiments, '/experiments')
 
 if __name__ == '__main__':

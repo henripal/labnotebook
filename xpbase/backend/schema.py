@@ -33,10 +33,22 @@ class RunSchema(Schema):
     
     epoch = fields.Int()
 
-    model_params = fields.Raw()
+    custom_fields = fields.Raw()
     experiment = fields.Nested(ExperimentSchema)
+
+
+class CustomFieldsSchema(Schema):
+    timestep = fields.Int()
+    cf = fields.Float()
+
+class ModelParamsSchema(Schema):
+    run_id = fields.Int()
+    model_params = fields.Raw()
 
 runs_schema = RunSchema(many=True)
 run_schema = RunSchema()
 xps_schema = ExperimentSchema(many=True)
 xp_schema = ExperimentSchema()
+cfs_schema = CustomFieldsSchema(many=True)
+modelparams_schema = ModelParamsSchema(many=True)
+modelparam_schema = ModelParamsSchema()

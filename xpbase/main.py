@@ -21,7 +21,8 @@ def initialize(db_string):
     # we cannot import before knowing db_string
     global Experiment
     global TrainingStep
-    from xpbase.model import Experiment, TrainingStep
+    global ModelParams
+    from xpbase.model import Experiment, TrainingStep, ModelParams
 
     # we link the Experiment and TrainingStep objects
     Experiment.steps = relationship("TrainingStep", order_by=TrainingStep.timestep,
@@ -30,7 +31,7 @@ def initialize(db_string):
     # and we update the metadata
     xpbase.Base.metadata.create_all(engine)
     
-    return Experiment, TrainingStep
+    return Experiment, TrainingStep, ModelParams
 
 def start_experiment(dt = dt.datetime.now(), 
                     gpu_id = 0,
@@ -82,7 +83,7 @@ def end_experiment(xp, final_trainloss=None, final_trainacc=None,
 
 def step_experiment(xp, timestep,
         trainloss=None, trainacc=None, valacc=None,
-        epoch=None, model_params=None):
+        epoch=None, custom_fields=None, model_params=None):
     """
     add a step to the experiment
     ___________
@@ -92,19 +93,25 @@ def step_experiment(xp, timestep,
     trainloss, trainacc, valacc: optional scalars showing the state of the xp after the step
     timestep: step label
     epoch: optional epoch label
+    custom_fields: whatever extra data you want to save
     model_params: weights of the model after the step
     ________
     RETURNS:
     ________
-    a TrainingStep object
+    a tuple (TrainingStep, ModelParams) 
     """
+    modelparams = None
+
     step = TrainingStep(run_id=xp.run_id, timestep=timestep,
         trainloss=trainloss, trainacc=trainacc, valacc=valacc, 
-        epoch=epoch, model_params=model_params)
+        epoch=epoch, custom_fields=custom_fields)
     xpbase.session.add(step)
+    if model_params:
+        modelparams = ModelParams(step_id=step.step_id, model_params=model_params)
+        xpbase.session.add(modelparams)
     xpbase.session.commit()
 
-    return step
+    return step, modelparams
 
     
 

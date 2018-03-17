@@ -16,13 +16,13 @@
             </v-list-tile-content>
           </v-list-tile>
           <v-list-tile>
-            <v-checkbox label='Val. Acc.' v-model="toplot" value="valacc"></v-checkbox>
+            <v-checkbox label='Val. Acc.' v-model="standardFields" value="valacc"></v-checkbox>
           </v-list-tile>
           <v-list-tile>
-            <v-checkbox label='Train. Acc.' v-model="toplot" value="trainacc"></v-checkbox>
+            <v-checkbox label='Train. Acc.' v-model="standardFields" value="trainacc"></v-checkbox>
           </v-list-tile>
           <v-list-tile>
-            <v-checkbox label='Train. Loss' v-model="toplot" value="trainloss"></v-checkbox>
+            <v-checkbox label='Train. Loss' v-model="standardFields" value="trainloss"></v-checkbox>
           </v-list-tile>
           <v-list-tile>
             <v-list-tile-content>
@@ -48,6 +48,18 @@
             <v-switch :label="'autoupdate ' + (liveUpdate ? 'on' : 'off')"
             v-model="liveUpdate"></v-switch>
           </v-list-tile>
+          <v-list-tile>
+            <v-list-tile-content>
+              <v-list-tile-title>
+              Custom variables:
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile v-for="field in this.possibleCustomFieldsList" :key="field">
+            <v-checkbox :label="field" v-model="customFields" :value="field"></v-checkbox>
+          </v-list-tile>
+
+
         </v-list>
       </v-menu>
     </v-toolbar>
@@ -60,9 +72,12 @@ export default {
   data () {
     return {
       liveUpdate: false,
+      possibleStandardFields: ['trainacc', 'valacc', 'trainloss'],
+      possibleCustomFields:  {},
+      possibleCustomFieldsList:  [],
+      customFields: [],
       intervalControl: null,
-      updateTime: 200,
-      toplot: ['valacc'],
+      standardFields: ['trainacc'],
       selectitems: ['line', 'bar'],
       options: {
         chart: {
@@ -78,26 +93,52 @@ export default {
     }
   },
   computed: {
-    toplot_val: function() {
-      return this.toplot;
+    computedStandardFields: function() {
+      return this.standardFields;
+    },
+    computedAllFields: function() {
+      return this.standardFields.concat(this.customFields)
     }
   },
   methods: {
+    updatePossibleCustomFields: function() {
+      //this.possibleCustomFields = {}
+      for (var experiment of this.selectedExperiments) {
+        this.getCustomFields(experiment);
+      }
+    },
+    updatePossibleCustomFieldList: function() {
+      this.possibleCustomFieldsList = Array.from(new Set([].concat.apply([], Object.values(this.possibleCustomFields))))
+    },
+    getCustomFields: function(experiment_id) {
+      this.$http.get('customfieldnames/' + experiment_id).then(function(response) {
+        this.possibleCustomFields[experiment_id] = response.body
+        this.updatePossibleCustomFieldList()
+      })
+    }, 
     responseToData: function(response, seriesname) {
-      var y = response.body[seriesname]
+      var localname = this.possibleStandardFields.includes(seriesname) ? seriesname : 'cf'
+      var y = response.body[localname]
       var x = response.body.timestep
 
       return x.map((e, i) => { return [e, y[i]]})
     },
     addExperiment: function(experiment_id) {
-      for (var tp of this.toplot) {
+      for (var tp of this.computedAllFields) {
         this.addSeries(experiment_id, tp)
       }
     },
     addSeries: function(index, variable) {
       var dummy = this.$refs.chart.chart.get('dummy');
       if (dummy !== undefined) { dummy.remove(); }
-      this.$http.get('steps/' + index).then(function(response) {
+
+      if (this.possibleStandardFields.includes(variable)) {
+        var url = 'steps/' + index
+      } else {
+        var url = 'customfields/' + index + '?fieldname=' + variable
+      }
+
+      this.$http.get(url).then(function(response) {
         if (Object.keys(response.body).length > 0) {
           this.$refs.chart.chart.addSeries({
               name: 'Run ' + index + ', ' + variable,
@@ -118,18 +159,41 @@ export default {
       }
     },
     removeExperiment: function(xp_index) {
-      for (var tp of this.toplot) {
+      var localCustomFields = []
+      for (var cf of this.customFields) {
+        if (this.possibleCustomFields[xp_index].includes(cf)) {
+          localCustomFields.push(cf)
+        }
+      }
+      var newFieldList = this.standardFields.concat(localCustomFields)
+
+      for (var tp of newFieldList) {
         this.$refs.chart.chart.get(xp_index + ',' + tp).remove()
         this.$refs.chart.chart.reflow();
       }
     },
     removeVariable: function(variableName) {
-      for (var xp_index of this.selectedExperiments) {
+      if (this.customFields.includes(variableName)) {
+        var xplist = []
+        for (var xp_index of this.selectedExperiments) {
+          if (this.possibleCustomFields[xp_index].includes(variableName)) {
+            xplist.push(xp_index)
+          }
+        }
+      } else {
+        var xplist = this.selectedExperiments
+      }
+      for (var xp_index of xplist) {
         this.$refs.chart.chart.get(xp_index + ',' + variableName).remove()
         this.$refs.chart.chart.reflow();
       }
     },
     updateSeries: function(xp_index, variableName) {
+      if (this.possibleStandardFields.includes(variableName)) {
+        var url = 'steps/' + xp_index
+      } else {
+        var url = 'customfields/' + xp_index + '?fieldname=' + variableName
+      }
       this.$http.get('steps/' + xp_index).then(function(response) {
         if (Object.keys(response.body).length > 0) {
           var newData = this.responseToData(response, variableName);
@@ -148,20 +212,18 @@ export default {
     runLiveUpdate: function() {
       this.intervalControl = setInterval(() => {
         for (var xp of this.selectedExperiments) {
-          for (var varname of this.toplot) {
+          for (var varname of this.standardFields) {
             this.updateSeries(xp, varname)
           }
         }
         }, 1000);
-      this.updateTime = 0;
     },
     stopLiveUpdate: function() {
       clearInterval(this.intervalControl);
-      this.updateTime = 200;
     }
   },
   watch: {
-    toplot_val: function(newVal, oldVal) {
+    computedAllFields: function(newVal, oldVal) {
       if (newVal.length < oldVal.length) {
         if (newVal.length > 0) {
           var to_remove = oldVal.filter(item => { return newVal.indexOf(item) < 0; })
@@ -180,6 +242,8 @@ export default {
     },
     selectedExperiments: {
       handler :function(newVal, oldVal) {
+        this.updatePossibleCustomFields();
+
         if (newVal.length < oldVal.length) {
           if (newVal.length > 0) {
             var to_remove = oldVal.filter(item => { return newVal.indexOf(item) < 0; })
