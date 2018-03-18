@@ -4,17 +4,22 @@ from flask_cors import CORS, cross_origin
 import labnotebook
 from collections import defaultdict
 from sqlalchemy.sql import func
+import argparse
 
 """
 API definititions
 """
+
+parser = argparse.ArgumentParser()
+parser.add_argument("database_url")
+args = parser.parse_args()
 
 app = Flask(__name__)
 # this is for the ability to run everything from different servers.
 cors = CORS(app)
 api = Api(app)
 
-xp,ts, mp = labnotebook.initialize("postgres://postgres:1418@localhost/experiments")
+xp,ts, mp = labnotebook.initialize(args.database_url)
 
 def flip_dict(dict_list):
     """
@@ -87,5 +92,5 @@ api.add_resource(CustomFields, '/customfields/<string:run_id>')
 api.add_resource(CustomFieldNames, '/customfieldnames/<string:run_id>')
 api.add_resource(Experiments, '/experiments')
 
-if __name__ == '__main__':
+def start_backend():
     app.run(debug=True, port=3000)
