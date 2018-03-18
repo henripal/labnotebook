@@ -5,7 +5,7 @@ setup(
     version='0.1',                                                                   
     packages=find_packages(),                                                        
     include_package_data=True,
-    py_modules=['labnotebook', 'labnotebook.backend'],
+    python_requires='>=3',
     install_requires=[
         'sqlalchemy',
         'flask',
