@@ -3,7 +3,6 @@
 __pycache__/
 .Python
 develop-eggs/
-dist/
 eggs/
 .eggs/
 parts/
