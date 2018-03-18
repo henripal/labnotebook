@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, sessionmaker
 import datetime as dt
-import xpbase
+import labnotebook
 
 
 def initialize(db_string):
@@ -12,9 +12,9 @@ def initialize(db_string):
     """
     
     engine = create_engine(db_string)
-    xpbase.Base = declarative_base(engine)
+    labnotebook.Base = declarative_base(engine)
     Session = sessionmaker(bind = engine)
-    xpbase.session = Session()
+    labnotebook.session = Session()
 
     # Experiment and TrainingStep are objects that
     # we need to access everywhere. 
@@ -22,14 +22,14 @@ def initialize(db_string):
     global Experiment
     global TrainingStep
     global ModelParams
-    from xpbase.model import Experiment, TrainingStep, ModelParams
+    from labnotebook.model import Experiment, TrainingStep, ModelParams
 
     # we link the Experiment and TrainingStep objects
     Experiment.steps = relationship("TrainingStep", order_by=TrainingStep.timestep,
                                back_populates="experiment")
 
     # and we update the metadata
-    xpbase.Base.metadata.create_all(engine)
+    labnotebook.Base.metadata.create_all(engine)
     
     return Experiment, TrainingStep, ModelParams
 
@@ -52,8 +52,8 @@ def start_experiment(dt = dt.datetime.now(),
     xp = Experiment(dt=dt,
         gpu = gpu_id,
         model_desc = model_desc)
-    xpbase.session.add(xp)
-    xpbase.session.commit()
+    labnotebook.session.add(xp)
+    labnotebook.session.commit()
 
     return xp
 
@@ -77,7 +77,7 @@ def end_experiment(xp, final_trainloss=None, final_trainacc=None,
     xp.final_trainacc = final_trainacc
     xp.final_valacc = final_valacc
     xp.completed = True
-    xpbase.session.commit()
+    labnotebook.session.commit()
 
     return xp
 
@@ -105,11 +105,11 @@ def step_experiment(xp, timestep,
     step = TrainingStep(run_id=xp.run_id, timestep=timestep,
         trainloss=trainloss, trainacc=trainacc, valacc=valacc, 
         epoch=epoch, custom_fields=custom_fields)
-    xpbase.session.add(step)
+    labnotebook.session.add(step)
     if model_params:
         modelparams = ModelParams(step_id=step.step_id, model_params=model_params)
-        xpbase.session.add(modelparams)
-    xpbase.session.commit()
+        labnotebook.session.add(modelparams)
+    labnotebook.session.commit()
 
     return step, modelparams
 

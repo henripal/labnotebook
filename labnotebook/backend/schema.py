@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, ValidationError, pre_load
-import xpbase
+import labnotebook
 
 """
 We define the schemas using marshmallow for

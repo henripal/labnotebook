@@ -62,9 +62,9 @@
                 <td class="text-xs-right">{{ props.item.run_id }}</td>
                 <td class="text-xs-right">{{ props.item.dt }}</td>
                 <td class="text-xs-right">{{ props.item.gpu }}</td>
-                <td class="text-xs-right">{{ props.item.final_valacc }}</td>
-                <td class="text-xs-right">{{ props.item.final_trainacc }}</td>
-                <td class="text-xs-right">{{ props.item.final_trainloss }}</td>
+                <td class="text-xs-right">{{ Math.round(100*props.item.final_valacc)/100 }}</td>
+                <td class="text-xs-right">{{ Math.round(100*props.item.final_trainacc)/100 }}</td>
+                <td class="text-xs-right">{{ Math.round(100*props.item.final_trainloss)/100 }}</td>
               </template>
             </v-data-table>
           </v-flex>

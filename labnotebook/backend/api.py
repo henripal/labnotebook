@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS, cross_origin
-import xpbase
+import labnotebook
 from collections import defaultdict
 from sqlalchemy.sql import func
 
@@ -14,7 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
 
-xp,ts, mp = xpbase.initialize("postgres://postgres:1418@localhost/experiments")
+xp,ts, mp = labnotebook.initialize("postgres://postgres:1418@localhost/experiments")
 
 def flip_dict(dict_list):
     """
@@ -30,19 +30,19 @@ def flip_dict(dict_list):
 
 class Steps(Resource):
     def get(self, run_id):
-        query = xpbase.session.query(ts.step_id,
+        query = labnotebook.session.query(ts.step_id,
         ts.timestep,
         ts.run_id,
         ts.trainacc,
         ts.valacc,
         ts.trainloss).filter(ts.run_id == run_id).all()
-        result = xpbase.runs_schema.dump(query)[0]
+        result = labnotebook.runs_schema.dump(query)[0]
 
         return jsonify(flip_dict(result))
 
 class Experiments(Resource):
     def get(self):
-        query = xpbase.session.query(xp.run_id,
+        query = labnotebook.session.query(xp.run_id,
         xp.dt,
         xp.gpu,
         xp.completed,
@@ -51,13 +51,13 @@ class Experiments(Resource):
         xp.final_valacc,
         xp.model_desc
         ).order_by(xp.run_id.desc()).all()
-        result = xpbase.xps_schema.dump(query)[0]
+        result = labnotebook.xps_schema.dump(query)[0]
 
         return jsonify(result)
 
 class CustomFieldNames(Resource):
     def get(self, run_id):
-        query = xpbase.session.query(
+        query = labnotebook.session.query(
             func.jsonb_object_keys(ts.custom_fields)).filter(
             ts.run_id == run_id).filter(
             ts.timestep == 1).all()
@@ -73,9 +73,9 @@ class CustomFields(Resource):
 
         fieldname = parser.parse_args()['fieldname']
 
-        query = xpbase.session.query(ts.timestep, ts.custom_fields[fieldname].label('cf')).filter(ts.run_id == run_id).all()
+        query = labnotebook.session.query(ts.timestep, ts.custom_fields[fieldname].label('cf')).filter(ts.run_id == run_id).all()
 
-        result = xpbase.cfs_schema.dump(query)[0]
+        result = labnotebook.cfs_schema.dump(query)[0]
 
 
         return jsonify(flip_dict(result))
