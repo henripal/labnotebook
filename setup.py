@@ -10,7 +10,8 @@ setup(
         'flask',
         'flask_restful',
         'flask_cors',
-        'psycopg2'
+        'psycopg2',
+        'marshmallow'
     ],
     entry_points={
         'console_scripts': [
