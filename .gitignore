@@ -2,7 +2,6 @@
 */.ipynb_checkpoints/*
 __pycache__/
 .Python
-build/
 develop-eggs/
 dist/
 eggs/
