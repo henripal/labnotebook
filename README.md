@@ -9,7 +9,7 @@
 
 All you need to do is to modify your code to include `labnotebook.start_experiment()` and `labnotebook.stop_experiment()` and pass the info you would like to save to the database as arguments. As an option, you can save information for each training step by using `labnotebook.step_experiment()`.
 
-You can see a very simple example notebook [here](./nbs/example_usage.ipynb).
+You can see a very simple example notebook [here](./nbs/basic_usage.ipynb).
 
 ## Why labnotebook?
 
