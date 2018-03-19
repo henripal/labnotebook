@@ -60,3 +60,8 @@ This is a very early alpha version of the tool that I'd thought some people migh
 For now I've tested this only on Ubuntu, with PyTorch-style experiments, using chromium.
 I'm happy to get any feedback of how this runs on other platforms! 
 
+
+# Attribution:
+
+The front-end of this project uses [VueJS](https://vuejs.org/), [Vuetify](https://vuetifyjs.com/en/) and [Highcharts](https://www.highcharts.com/).
+
