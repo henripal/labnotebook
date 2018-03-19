@@ -65,3 +65,6 @@ I'm happy to get any feedback of how this runs on other platforms!
 
 The front-end of this project uses [VueJS](https://vuejs.org/), [Vuetify](https://vuetifyjs.com/en/) and [Highcharts](https://www.highcharts.com/).
 
+---
+
+If you like this and want to be updated on what I'm doing, [follow me on twitter?](https://twitter.com/henripal)
