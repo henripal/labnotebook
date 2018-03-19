@@ -84,8 +84,11 @@ export default {
           zoomType: 'x'
         },
         yAxis: {
-          title: {text: null },
+          title: {text: 'trainacc' },
           type: 'linear'
+        },
+        xAxis: {
+          title: {text: 'timestep'}
         },
         title: null,
         series: [{id: 'dummy', data: [null, null]}]
@@ -224,6 +227,9 @@ export default {
   },
   watch: {
     computedAllFields: function(newVal, oldVal) {
+      this.$nextTick(function() {
+        this.options.yAxis.title.text = newVal;
+      })
       if (newVal.length < oldVal.length) {
         if (newVal.length > 0) {
           var to_remove = oldVal.filter(item => { return newVal.indexOf(item) < 0; })
