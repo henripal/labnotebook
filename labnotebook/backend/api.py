@@ -13,6 +13,7 @@ API definititions
 def start_backend():
     parser = argparse.ArgumentParser()
     parser.add_argument("database_url")
+    parser.add_argument("--host", default="127.0.0.1")
     args = parser.parse_args()
 
     app = Flask(__name__)
@@ -93,4 +94,4 @@ def start_backend():
     api.add_resource(CustomFieldNames, '/customfieldnames/<string:run_id>')
     api.add_resource(Experiments, '/experiments')
 
-    app.run(debug=True, port=3000)
+    app.run(debug=True, host=args.host, port=3000)
