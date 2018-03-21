@@ -47,7 +47,14 @@ start_backend <database_url>
 ```
 
 ### Start the webapp:
-Simply navigate to labnotebook/frontend and double click on `index.html`.
+
+Navigate to the `frontend` directory and serve it; for example using python 3's http.server:
+```
+cd frontend
+python -m http.server
+```
+
+Then open the serving address and port, typically `http//localhost:8000` if you're using the python server.
 
 # Usage and Documentation:
 
