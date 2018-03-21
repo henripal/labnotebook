@@ -67,6 +67,10 @@ This is a very early alpha version of the tool that I'd thought some people migh
 For now I've tested this only on Ubuntu, with PyTorch-style experiments, using chromium.
 I'm happy to get any feedback of how this runs on other platforms! 
 
+## Contribution!
+
+I'm by myself working on this and there are bugs galore. Any contributions are welcome; let me know if you would like to contribute but not sure how to go about doing it, and I'll walk you through it!
+
 
 # Attribution:
 
