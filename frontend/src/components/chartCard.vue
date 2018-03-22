@@ -143,7 +143,7 @@ export default {
 
       this.$http.get(url).then(function(response) {
         if (Object.keys(response.body).length > 0) {
-          this.$refs.chart.chart.addSeries({
+          var ha = this.$refs.chart.chart.addSeries({
               name: 'Run ' + index + ', ' + variable,
               id: index + ',' + variable,
               type: 'line',
@@ -227,9 +227,6 @@ export default {
   },
   watch: {
     computedAllFields: function(newVal, oldVal) {
-      this.$nextTick(function() {
-        this.options.yAxis.title.text = newVal;
-      })
       if (newVal.length < oldVal.length) {
         if (newVal.length > 0) {
           var to_remove = oldVal.filter(item => { return newVal.indexOf(item) < 0; })
@@ -245,6 +242,8 @@ export default {
           this.addVariable(to_add_name);
         } 
       }
+      this.$refs.chart.chart.yAxis[0].setTitle({ text: newVal})
+      // this.options.yAxis.title.text = newVal;
     },
     selectedExperiments: {
       handler :function(newVal, oldVal) {

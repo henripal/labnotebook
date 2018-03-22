@@ -10,10 +10,8 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "highcharts": "^6.0.7",
     "vue": "^2.5.14",
     "vue-cli": "^2.9.3",
-    "vue-highcharts": "0.0.10",
     "vue-lodash": "^1.0.4",
     "vue-resource": "^1.5.0",
     "vuetify": "^1.0.5"
@@ -31,8 +29,10 @@
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
     "file-loader": "^1.1.4",
+    "highcharts": "^6.0.7",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
+    "vue-highcharts": "0.0.10",
     "vue-loader": "^13.7.1",
     "vue-template-compiler": "^2.5.14",
     "webpack": "^3.6.0",
