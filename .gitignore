@@ -15,3 +15,4 @@ wheels/
 *.py.swp
 .ropeproject/
 node_modules/
+nbs/data/

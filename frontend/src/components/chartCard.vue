@@ -219,7 +219,7 @@ export default {
             this.updateSeries(xp, varname)
           }
         }
-        }, 1000);
+        }, 2000);
     },
     stopLiveUpdate: function() {
       clearInterval(this.intervalControl);

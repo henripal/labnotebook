@@ -60,6 +60,7 @@ Then open the serving address and port, typically `http//localhost:8000` if you'
 
 A simple example notebook is available [here](./nbs/basic_usage.ipynb).
 
+A more realstic example, training a convolutional neural network on MNIST in PyTorch and logging with `labnotebook` is available [here](./nbs/mnist.ipynb).
 
 # Limitations and To Dos:
 
