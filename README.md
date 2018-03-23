@@ -10,6 +10,7 @@
 All you need to do is to modify your code to include `labnotebook.start_experiment()` and `labnotebook.stop_experiment()` and pass the info you would like to save to the database as arguments. As an option, you can save information for each training step by using `labnotebook.step_experiment()`.
 
 You can see a very simple example notebook [here](./nbs/basic_usage.ipynb).
+Another example of how to log while training a ConvNet in PyTorch is [here](./nbs/mnist.ipynb).
 
 ## Why labnotebook?
 
@@ -18,6 +19,7 @@ In the life sciences, scientists write everything in their [lab notebooks](https
 
 - store everything forever in a queryable database. [Sacred](https://github.com/IDSIA/sacred) provides some of this functionality, but the interface is complex and inflexible. In addition, I think experimental data is relational data intermixed with nosql data, and postgres is better adapted to the type of queries for this kind of experimental data.
 
+For a quick read on the tech stack choices I made, check out my [blog post](https://henripal.github.io/labnotebook).
 
 # Installation
 
