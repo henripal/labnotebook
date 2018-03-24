@@ -16,7 +16,7 @@ Another example of how to log while training a ConvNet in PyTorch is [here](./nb
 ## Why labnotebook?
 
 In the life sciences, scientists write everything in their [lab notebooks](https://en.wikipedia.org/wiki/Lab_notebook). I wanted a similar permanent store for my PyTorch experiments that allowed me to:
-- asynchronously look at what was going on. [Tensoboard](https://www.tensorflow.org/programmers_guide/summaries_and_tensorboard) obviously provides excellent functionality, albeit with an interface and storage system that I didn't especially like. It's very hard to keep track of all the indicators of old experiments and to compare them to newer experiments.
+- asynchronously look at what was going on. [TensorBoard](https://www.tensorflow.org/programmers_guide/summaries_and_tensorboard) obviously provides excellent functionality, albeit with an interface and storage system that I didn't especially like. It's very hard to keep track of all the indicators of old experiments and to compare them to newer experiments.
 
 - store everything forever in a queryable database. [Sacred](https://github.com/IDSIA/sacred) provides some of this functionality, but the interface is complex and inflexible. In addition, I think experimental data is relational data intermixed with nosql data, and postgres is better adapted to the type of queries for this kind of experimental data.
 
