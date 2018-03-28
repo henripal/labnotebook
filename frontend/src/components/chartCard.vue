@@ -72,6 +72,7 @@ export default {
   data () {
     return {
       liveUpdate: false,
+      lastUpdate: {},
       possibleStandardFields: ['trainacc', 'valacc', 'trainloss'],
       possibleCustomFields:  {},
       possibleCustomFieldsList:  [],
@@ -192,34 +193,43 @@ export default {
       }
     },
     updateSeries: function(xp_index, variableName) {
+      var last_timestep = this.lastUpdate[xp_index]
+
       if (this.possibleStandardFields.includes(variableName)) {
         var url = 'steps/' + xp_index
+        if (last_timestep) { url = url + '?start_timestep=' + last_timestep}
       } else {
         var url = 'customfields/' + xp_index + '?fieldname=' + variableName
+        if (last_timestep) { url = url + '&start_timestep=' + last_timestep}
       }
-      this.$http.get('steps/' + xp_index).then(function(response) {
+      this.$http.get(url).then(function(response) {
         if (Object.keys(response.body).length > 0) {
+          // store last timestep
+          this.lastUpdate['xp_index'] = response.body.timestep[response.body.timestep.length-1]
+
           var newData = this.responseToData(response, variableName);
-          var oldData = this.$refs.chart.chart.get(xp_index + ',' + variableName).data
-          if (newData.length > oldData.length) {
-            var newPoints = newData.slice(oldData.length)
-            for (var point of newPoints) {
-              // maybe here don't redraw all points
-              this.$refs.chart.chart.get(xp_index + ',' + variableName).addPoint(point, true);
-            }
-            this.$refs.chart.chart.reflow();
+          // var oldData = this.$refs.chart.chart.get(xp_index + ',' + variableName).data
+          // if (newData.length > oldData.length) {
+            // var newPoints = newData.slice(oldData.length)
+          var i = 0
+          for (var point of newData) {
+            // maybe here don't redraw all points
+            var redraw = i == newData.length - 1
+            i += 1
+            this.$refs.chart.chart.get(xp_index + ',' + variableName).addPoint(point, redraw);
           }
+          if (newData) { this.$refs.chart.chart.reflow(); }
         }
       })
     },
     runLiveUpdate: function() {
       this.intervalControl = setInterval(() => {
         for (var xp of this.selectedExperiments) {
-          for (var varname of this.standardFields) {
+          for (var varname of this.computedAllFields) {
             this.updateSeries(xp, varname)
           }
         }
-        }, 2000);
+        }, 3000);
     },
     stopLiveUpdate: function() {
       clearInterval(this.intervalControl);

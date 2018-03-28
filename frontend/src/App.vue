@@ -14,8 +14,8 @@
             v-model="selectedExperiment"
             label="Add Experiment" min-width="300px" class="pr-5">
           </v-select>
-          <v-btn flat icon>
-            <v-icon @click="getExperiments()">cached</v-icon>
+          <v-btn flat icon @click="getExperiments()">
+            <v-icon>cached</v-icon>
           </v-btn>
       </v-list-tile>
       <transition-group name="list-complete" tag="div">
