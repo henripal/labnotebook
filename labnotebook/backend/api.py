@@ -37,12 +37,17 @@ def start_backend():
 
     class Steps(Resource):
         def get(self, run_id):
+            parser = reqparse.RequestParser()
+            parser.add_argument('start_timestep', type=int, default=0)
+            start_timestep = parser.parse_args()['start_timestep']
+
             query = labnotebook.session.query(ts.step_id,
             ts.timestep,
             ts.run_id,
             ts.trainacc,
             ts.valacc,
-            ts.trainloss).filter(ts.run_id == run_id).all()
+            ts.trainloss).filter(ts.run_id == run_id).filter(
+                ts.timestep>start_timestep).all()
             result = labnotebook.runs_schema.dump(query)[0]
 
             return jsonify(flip_dict(result))
@@ -77,10 +82,15 @@ def start_backend():
         def get(self, run_id):
             parser = reqparse.RequestParser()
             parser.add_argument('fieldname', type=str)
+            parser.add_argument('start_timestep', type=int, default=0)
 
             fieldname = parser.parse_args()['fieldname']
+            start_timestep = parser.parse_args()['start_timestep']
 
-            query = labnotebook.session.query(ts.timestep, ts.custom_fields[fieldname].label('cf')).filter(ts.run_id == run_id).all()
+            query = labnotebook.session.query(
+                ts.timestep, ts.custom_fields[fieldname].label('cf')).filter(
+                    ts.run_id == run_id).filter(
+                    ts.timestep>start_timestep).all()
 
             result = labnotebook.cfs_schema.dump(query)[0]
 

@@ -16,3 +16,4 @@ wheels/
 .ropeproject/
 node_modules/
 nbs/data/
+.vscode/
