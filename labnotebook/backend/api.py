@@ -69,14 +69,22 @@ def start_backend():
 
     class CustomFieldNames(Resource):
         def get(self, run_id):
-            query = labnotebook.session.query(
-                func.jsonb_object_keys(ts.custom_fields)).filter(
+            # FIRST CHECK IF THERE ARE CUSTOM FIELDS
+            query = labnotebook.session.query(ts.custom_fields).filter(
                 ts.run_id == run_id).filter(
                 ts.timestep == 1).all()
 
-            query = [q[0] for q in query]
+            if query[0][0] is not None:
+                query = labnotebook.session.query(
+                    func.jsonb_object_keys(ts.custom_fields)).filter(
+                    ts.run_id == run_id).filter(
+                    ts.timestep == 1).all()
 
-            return jsonify(query)
+                query = [q[0] for q in query]
+
+                return jsonify(query)
+
+            return []
 
     class CustomFields(Resource):
         def get(self, run_id):

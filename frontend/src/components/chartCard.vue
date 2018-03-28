@@ -32,7 +32,7 @@
             </v-list-tile-content>
           </v-list-tile>
           <v-list-tile>
-            <v-radio-group :column="false" v-model="options.yAxis.type">
+            <v-radio-group :column="false" v-model="yAxisType" @change="updateYAxisType()">
               <v-radio label="log" value="logarithmic"></v-radio>
               <v-radio label="linear" value="linear"></v-radio>
             </v-radio-group>
@@ -73,6 +73,7 @@ export default {
     return {
       liveUpdate: false,
       lastUpdate: {},
+      yAxisType: 'linear',
       possibleStandardFields: ['trainacc', 'valacc', 'trainloss'],
       possibleCustomFields:  {},
       possibleCustomFieldsList:  [],
@@ -105,6 +106,9 @@ export default {
     }
   },
   methods: {
+    updateYAxisType: function() {
+      this.$refs.chart.chart.yAxis[0].update({ type: this.yAxisType })
+    },
     updatePossibleCustomFields: function() {
       //this.possibleCustomFields = {}
       for (var experiment of this.selectedExperiments) {
@@ -116,6 +120,7 @@ export default {
     },
     getCustomFields: function(experiment_id) {
       this.$http.get('customfieldnames/' + experiment_id).then(function(response) {
+        console.log(response.body)
         this.possibleCustomFields[experiment_id] = response.body
         this.updatePossibleCustomFieldList()
       })
