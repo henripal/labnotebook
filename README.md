@@ -28,6 +28,8 @@ For a quick read on the tech stack choices I made, check out my [blog post](http
 
 Follow the [detailed installation guides](https://wiki.postgresql.org/wiki/Detailed_installation_guides), create your database, and make a note of your database's url. It's usually of the form `postgres://<username>:<password>@localhost/<databasename>`.
 
+Note you need version 9.4+.
+
 ### Install labnotebook:
 
 Clone the repository:
