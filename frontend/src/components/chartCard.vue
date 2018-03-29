@@ -3,6 +3,9 @@
     <v-toolbar dense dark color="accent">
       <v-toolbar-title>Chart</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn flat icon @click="refresh()">
+        <v-icon>cached</v-icon>
+      </v-btn>
       <v-menu bottom left min-width='250px' :close-on-content-click="false">
         <v-btn slot="activator" flat dark>
           options
@@ -11,7 +14,7 @@
           <v-list-tile>
             <v-list-tile-content>
               <v-list-tile-title>
-              Variables to plot: 
+              Fariables to plot: 
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -226,6 +229,13 @@ export default {
           if (newData) { this.$refs.chart.chart.reflow(); }
         }
       })
+    },
+    refresh: function() {
+      for (var xp of this.selectedExperiments) {
+        for (var varname of this.computedAllFields) {
+          this.updateSeries(xp, varname)
+        }
+      }
     },
     runLiveUpdate: function() {
       this.intervalControl = setInterval(() => {
