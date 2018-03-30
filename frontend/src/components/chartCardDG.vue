@@ -66,14 +66,20 @@
         </v-list>
       </v-menu>
     </v-toolbar>
-    <highcharts :options="options" ref="chart"></highcharts>
+    <app-chart :chartData="dgData" ref="chart"></app-chart>
   </v-card>
 </template>
 
 <script>
+import chart from './chart.vue'
+
 export default {
+  components: {
+    appChart: chart
+  },
   data () {
     return {
+      dgData: [[1, 2]],
       liveUpdate: false,
       lastUpdate: {},
       yAxisType: 'linear',
@@ -140,8 +146,8 @@ export default {
       }
     },
     addSeries: function(index, variable) {
-      var dummy = this.$refs.chart.chart.get('dummy');
-      if (dummy !== undefined) { dummy.remove(); }
+      // var dummy = this.$refs.chart.chart.get('dummy');
+      // if (dummy !== undefined) { dummy.remove(); }
 
       if (this.possibleStandardFields.includes(variable)) {
         var url = 'steps/' + index
@@ -151,6 +157,8 @@ export default {
 
       this.$http.get(url).then(function(response) {
         if (Object.keys(response.body).length > 0) {
+          this.dgData.push(this.responseToData(response, variable))
+          console.log(this.dgData)
           var ha = this.$refs.chart.chart.addSeries({
               name: 'Run ' + index + ', ' + variable,
               id: index + ',' + variable,

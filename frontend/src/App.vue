@@ -49,11 +49,20 @@
       <v-container grid-list-xl text-xs-center fluid>
         <v-layout row wrap>
           <v-flex xs6>
-            <app-chart-card :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card>
+            <app-chart-card-dygraph :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card-dygraph>
           </v-flex>
 
           <v-flex xs6>
             <app-chart-card :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card>
+          </v-flex>
+
+
+          <v-flex xs6>
+            <app-chart-card :selectedExperiments="selectedExperiments" :experiments="experiments"></app-chart-card>
+          </v-flex>
+
+          <v-flex xs6>
+          <div id="graph"></div>
           </v-flex>
 
           <v-flex xs6>
@@ -77,6 +86,8 @@
 
 <script>
 import chartCard from './components/chartCard.vue'
+import chartCardDygraph from './components/chartCardDG.vue'
+
 
 export default {
   data () {
@@ -97,7 +108,8 @@ export default {
     }
   },
   components: {
-    appChartCard: chartCard
+    appChartCard: chartCard,
+    appChartCardDygraph: chartCardDygraph
   },
   computed: {
     flatExperiments() {
@@ -140,7 +152,8 @@ export default {
   },
   beforeMount() {
     this.getExperiments()
-  }
+  },
+
 }
 </script>
 

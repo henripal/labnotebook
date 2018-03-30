@@ -10,8 +10,10 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "dygraphs": "^2.1.0",
     "vue": "^2.5.14",
     "vue-cli": "^2.9.3",
+    "vue-dygraphs": "^0.1.1",
     "vue-lodash": "^1.0.4",
     "vue-resource": "^1.5.0",
     "vuetify": "^1.0.5"
